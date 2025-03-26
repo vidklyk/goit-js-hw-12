@@ -25,3 +25,7 @@ export const initializeLightbox = () => {
     scrollZoom: false,
   });
 };
+
+export const clearGallery = () => {
+  document.querySelector('.gallery').innerHTML = '';
+};
