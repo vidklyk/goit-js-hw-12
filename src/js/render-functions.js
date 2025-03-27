@@ -16,6 +16,17 @@ export const createGalleryCardTemplate = imgInfo => {
     </li>`;
 };
 
+export const renderGallery = (images, container) => {
+  container.insertAdjacentHTML(
+    'beforeend',
+    images.map(createGalleryCardTemplate).join('')
+  );
+};
+
+export const clearGallery = () => {
+  document.querySelector('.gallery').innerHTML = '';
+};
+
 export const initializeLightbox = () => {
   return new SimpleLightbox('.gallery a', {
     captions: true,

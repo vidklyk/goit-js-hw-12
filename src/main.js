@@ -1,6 +1,8 @@
 import { fetchImages } from './js/pixabay-api';
 import {
   createGalleryCardTemplate,
+  renderGallery,
+  clearGallery,
   initializeLightbox,
 } from './js/render-functions';
 import iziToast from 'izitoast';
@@ -31,10 +33,6 @@ function hideMoreButton() {
   moreBtnEl.classList.add('is-hidden');
 }
 
-function clearGallery() {
-  galleryEl.innerHTML = '';
-}
-
 const onSearchFormSubmit = async event => {
   event.preventDefault();
   showLoader();
@@ -57,6 +55,7 @@ const onSearchFormSubmit = async event => {
     const response = await fetchImages(searchQuery, page);
 
     if (!response.hits.length) {
+      clearGallery();
       iziToast.show({
         color: 'red',
         message: 'Sorry, no images found. Try another search!',
@@ -66,7 +65,7 @@ const onSearchFormSubmit = async event => {
     }
 
     clearGallery();
-    galleryEl.innerHTML = response.hits.map(createGalleryCardTemplate).join('');
+    renderGallery(response.hits, galleryEl);
 
     if (!lightbox) {
       lightbox = initializeLightbox();
@@ -108,10 +107,7 @@ const loadMoreBtnClick = async () => {
       return;
     }
 
-    galleryEl.insertAdjacentHTML(
-      'beforeend',
-      response.hits.map(createGalleryCardTemplate).join('')
-    );
+    renderGallery(response.hits, galleryEl);
 
     if (lightbox) {
       lightbox.refresh();
@@ -130,6 +126,10 @@ const loadMoreBtnClick = async () => {
 
     if (response.hits.length < 15) {
       hideMoreButton();
+      iziToast.show({
+        color: 'blue',
+        message: `We're sorry, but you've reached the end of search results.`,
+      });
     } else {
       showMoreButton();
     }
